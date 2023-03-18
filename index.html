@@ -1,0 +1,209 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <style type="text/css">
+    body {
+      font-family: "Lucida Grande";
+      font-size: 16px;
+      background: #666;
+      counter-reset: Serial;
+    }
+    p {
+      margin: 0;
+      padding: 5px;
+    }
+    table {
+      border-collapse:collapse;
+    }
+    th {
+      background: #aaa;
+      padding: 5px 2px;
+      text-align: left;
+    }
+    tr:nth-child(odd) td {
+      background: #ddd;
+    }
+    tr:nth-child(even) td {
+      background: #ccc;
+    }
+    tr:last-child td {
+      border-bottom: 2px solid #666;
+    }
+    td {
+      padding: 2px;
+    }
+    tr td:first-child:before {
+      counter-increment: Serial;
+      content: counter(Serial);
+    }
+  </style>
+</head>
+<body>
+  <div style="padding: 10px; margin: auto; width: 400px;">
+    <div style="background-color: #ddd; width: 380px; height: 20px; padding: 10px;">
+      <div style="width: 100px; float: left;"><span id="test-no"></span></div>
+      <div style="width: 150px; float: left;"><span id="ip-no"></span></div>
+      <div style="width: 30px; float: left;"><span id="ip-try"></span></div>
+    </div>
+    <form>
+      <table>
+        <thead>
+          <tr>
+            <th width="35">
+              #
+            </th>
+            <th width="200">
+              IP
+            </th>
+            <th width="100">
+              Latency
+            </th>
+            <th width="50">
+              <a id="download-link" href="#" onclick="downloadAsCSV()">
+                <img height="20px" src="assets/download.png" />
+              </a>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="result">
+        </tbody>
+      </table>
+    </form>
+  </div>
+</body>
+</html>
+
+<script type="text/javascript">
+const cfIPv4 = {
+  London: [
+    
+  ],
+  Worldwide: [
+    "93.123.11.0/26", "92.223.122.160/27", "92.223.107.32/27", "82.148.98.40/29", "185.163.3.0/26", "5.8.92.0/26", "92.223.76.16/28", "81.253.239.0/30", "80.15.252.32/31", "195.34.58.16/31", "92.223.110.0/27", "5.188.94.0/28", "212.188.76.64/28", "188.94.153.0/28", "109.230.114.0/28", "217.76.64.88/30", "5.252.26.0/26", "120.28.10.44/30", "92.223.78.16/28", "171.229.196.128/27", "104.247.172.248/31", "92.223.55.0/26", "185.244.209.0/26", "93.123.38.0/26", "78.111.101.0/26", "5.8.43.0/28", "185.249.133.0/26", "82.114.163.144/30", "5.1.106.248/30", "213.156.151.0/26", "109.68.233.240/30", "197.148.108.104/29", "5.188.133.0/26", "188.72.125.0/24", "78.111.103.0/26", "80.93.210.0/26", "92.223.64.0/28", "37.110.209.224/29", "92.223.74.16/28", "5.188.7.0/26", "37.236.95.0/30", "197.215.140.232/29", "195.34.58.18/31", "5.101.222.0/28", "160.242.112.240/30", "134.0.219.24/30", "185.239.153.0/24", "130.193.166.0/30", "91.243.83.0/26", "95.85.88.0/26", "185.105.1.0/28", "94.43.206.200/29", "80.15.252.0/31", "190.95.248.32/30", "81.253.239.32/30", "92.38.159.0/26", "146.185.221.128/26", "62.209.27.232/31", "80.15.252.8/31", "87.120.106.0/26", "5.101.217.0/28", "92.223.118.0/27", "92.223.120.0/24", "92.38.142.0/26", "80.93.221.0/26", "92.223.122.128/25", "95.85.69.0/26", "37.17.119.112/28", "102.67.99.48/28", "92.223.120.0/27", "89.223.90.0/26", "5.189.207.0/28", "92.223.47.0/26", "81.253.239.24/30", "92.223.43.0/26", "45.82.103.0/26", "185.194.11.72/30", "92.223.114.0/26", "150.107.126.0/26", "81.253.239.12/30", "92.223.12.0/27", "43.245.140.0/30", "5.188.121.128/25", "92.38.168.0/28", "80.240.113.0/26", "31.184.207.0/26", "91.243.87.0/26", "102.68.141.72/30", "92.223.112.0/26", "80.15.252.16/31", "5.188.132.0/28", "194.44.246.204/30", "81.253.239.4/30", "185.101.137.0/28", "5.188.126.0/28", "45.65.8.0/26", "92.223.123.0/26", "89.218.28.16/28", "167.160.20.172/31", "45.82.100.0/26", "92.223.63.0/27", "46.49.10.224/28", "94.128.12.236/30", "94.176.183.0/26", "5.101.219.0/28", "95.85.93.0/26", "181.39.11.208/30", "213.156.144.0/26", "45.82.101.0/26", "92.223.61.16/28", "1.37.77.96/28", "92.223.126.0/26", "185.101.136.0/27", "185.188.144.0/26", "92.223.68.16/28", "92.223.124.0/26", "180.149.90.64/30", "197.188.22.100/30", "87.120.164.0/26", "92.38.170.0/28", "102.130.69.140/30", "92.38.159.0/28", "92.223.116.192/26", "197.225.145.24/30", "181.174.80.180/30", "195.22.198.48/31", "80.240.124.0/26", "171.234.242.192/27", "82.213.5.48/30", "134.0.219.36/31", "185.158.211.184/29", "82.97.205.0/26", "95.85.92.0/26", "46.19.99.4/30", "186.16.19.92/30", "5.101.68.0/27", "103.211.151.20/31", "195.14.146.80/30", "170.238.234.216/30", "178.160.192.36/30", "179.0.200.96/27", "92.223.118.32/28", "92.223.92.16/28", "151.248.104.94/31", "194.152.37.176/28", "41.210.189.20/30", "92.46.108.104/30", "92.223.108.0/27", "79.133.108.0/26", "37.98.156.188/30", "217.21.47.160/28"
+  ]
+};
+
+const urlParams = new URLSearchParams(window.location.search);
+
+let maxIP = urlParams.get('max')
+let testNo = 0;
+let validIPs = [];
+
+if (maxIP === null) {
+  maxIP = 20
+} else {
+  maxIP = ~~maxIP;
+}
+
+var ips = [];
+let numberOfWorkingIPs = 0;
+
+for (const cdnLocation in cfIPv4) {
+  for (const cidr of cfIPv4[cdnLocation]) {
+    ips = ips.concat(cidrToIpArray(cidr, cdnLocation));
+  }
+}
+testIPs(randomizeElements(ips));
+
+async function testIPs(ipList) {
+  const timeout = 2500;
+  for (const el of ipList) {
+    testNo++;
+    var testResult = 0;
+    const url = `https://${el.ip}/__down`;
+    const startTime = performance.now();
+    const controller = new AbortController();
+
+    for (const ch of ['', '|', '/', '-', '\\']) {
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+      }, timeout);
+      if (ch) {
+        document.getElementById('test-no').innerText = `Test #${testNo}:`;
+        document.getElementById('ip-no').innerText = el.ip;
+        document.getElementById('ip-no').style = `color: green`;
+        document.getElementById('ip-try').innerText = ch;
+      } else {
+        document.getElementById('test-no').innerText = `Test #${testNo}:`;
+        document.getElementById('ip-no').innerText = el.ip;
+        document.getElementById('ip-no').style = `color: red`;
+        document.getElementById('ip-try').innerText = ch;
+      }
+      try {
+        const response = await fetch(url, {
+          signal: controller.signal,
+        });
+
+        testResult++;
+      } catch (error) {
+        if (error.name === "AbortError") {
+          //
+        } else {
+          testResult++;
+        }
+      }
+      clearTimeout(timeoutId);
+    }
+
+    const duration = performance.now() - startTime;
+
+    if (testResult === 5) {
+      numberOfWorkingIPs++;
+      validIPs.push({ip: el.ip, location: el.location, time: Math.floor(duration / 5)});
+      const sortedArr = validIPs.sort((a, b) => a.time - b.time);
+      const tableRows = sortedArr.map(obj => `<tr><td></td><td>${obj.ip}</td><td>${obj.time}ms</td><td><img height="20px" src="assets/${obj.location}.png" /></td></tr>`).join('\n');
+      document.getElementById('result').innerHTML = tableRows;
+    }
+
+    if (maxIP > 0 && numberOfWorkingIPs >= maxIP) {
+      break;
+    }
+  }
+  document.getElementById('test-no').innerText = `DONE`;
+  document.getElementById('test-no').style = `color: green; font-weight: bold;`;
+  document.getElementById('ip-no').innerText = '';
+  document.getElementById('ip-try').innerText = '';
+}
+
+
+function cidrToIpArray(cidr, cdnLocation) {
+  const parts = cidr.split('/');
+  const ip = parts[0];
+  const mask = parseInt(parts[1], 10);
+  const ipParts = ip.split('.');
+  const start = (
+    (parseInt(ipParts[0], 10) << 24) |
+    (parseInt(ipParts[1], 10) << 16) |
+    (parseInt(ipParts[2], 10) << 8) |
+    parseInt(ipParts[3], 10)
+  ) >>> 0; // convert to unsigned int
+  const end = (start | (0xffffffff >>> mask)) >>> 0; // convert to unsigned int
+
+  const ips = [];
+  for (let i = start; i <= end; i++) {
+    const a = (i >> 24) & 0xff;
+    const b = (i >> 16) & 0xff;
+    const c = (i >> 8) & 0xff;
+    const d = i & 0xff;
+    ips.push({ip: `${a}.${b}.${c}.${d}`, location: cdnLocation});
+  }
+  return ips;
+}
+
+function randomizeElements(arr) {
+  return [...arr].sort((el1, el2) => {return el2.location === 'London' ? 0.75 - Math.random() : 0.5 - Math.random()});
+}
+
+function downloadAsCSV() {
+  const csvString = validIPs.map(el => el.ip).join('\n');
+  const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'ip-list.csv');
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+</script>
